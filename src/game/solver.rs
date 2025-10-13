@@ -1195,6 +1195,9 @@ impl geng::State for GameSolver {
         drop(assets);
         if let geng::Event::KeyPress { key } = event {
             match key {
+                geng::Key::F11 => {
+                    self.context.geng.window().toggle_fullscreen();
+                }
                 geng::Key::F5 => {
                     self.reload_level();
                 }

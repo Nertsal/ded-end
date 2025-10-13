@@ -111,6 +111,11 @@ impl geng::State for Lobby {
             geng::Event::Wheel { delta } => {
                 self.ui_context.cursor.scroll += delta as f32;
             }
+            geng::Event::KeyPress {
+                key: geng::Key::F11,
+            } => {
+                self.context.geng.window().toggle_fullscreen();
+            }
             _ => {}
         }
     }

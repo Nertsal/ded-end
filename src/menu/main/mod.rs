@@ -68,6 +68,11 @@ impl geng::State for MainMenu {
                     self.ui_context.text_edit.set_text(text);
                 }
             }
+            geng::Event::KeyPress {
+                key: geng::Key::F11,
+            } => {
+                self.context.geng.window().toggle_fullscreen();
+            }
             _ => (),
         }
     }

@@ -1035,6 +1035,9 @@ impl geng::State for GameDispatcher {
                 self.cursor_press();
             }
             geng::Event::KeyPress { key } => match key {
+                geng::Key::F11 => {
+                    self.context.geng.window().toggle_fullscreen();
+                }
                 geng::Key::Escape => self.press_escape(),
                 geng::Key::Backspace => self.press_backspace(),
                 geng::Key::Enter => self.press_enter(),
