@@ -20,7 +20,7 @@ update-server:
 
 publish-web:
     CONNECT=wss://{{server}} cargo geng build --release --platform web --out-dir target/geng
-    butler -- push target/geng nertsal/friendly:html5
+    butler -- push target/geng nertsal/ded-end:html5
 
 deploy:
     just update-server
