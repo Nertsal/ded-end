@@ -2,6 +2,7 @@ import { show_error } from './snippets/geng-2e04217e96c54cd9/inline0.js';
 import { set_progress_title } from './snippets/geng-2e04217e96c54cd9/inline1.js';
 import { set_progress } from './snippets/geng-2e04217e96c54cd9/inline2.js';
 import { PlaybackPositionNode } from './snippets/geng-web-audio-api-2a7d6b1b29a3f191/src/platform/PlaybackPositionNode.js';
+import { set_fullscreen } from './snippets/geng-window-db03662d38a1cf07/src/backend/web.js';
 import * as __wbg_star0 from './snippets/geng-2e04217e96c54cd9/inline3.js';
 import * as __wbg_star1 from './snippets/geng-asset-dc4ee02ddfcc1509/inline0.js';
 import * as __wbg_star2 from './snippets/geng-window-db03662d38a1cf07/src/backend/web.js';
@@ -267,7 +268,7 @@ function __wbg_adapter_52(arg0, arg1, arg2) {
     wasm.closure2618_externref_shim(arg0, arg1, arg2);
 }
 
-function __wbg_adapter_479(arg0, arg1, arg2, arg3) {
+function __wbg_adapter_483(arg0, arg1, arg2, arg3) {
     wasm.closure2836_externref_shim(arg0, arg1, arg2, arg3);
 }
 
@@ -982,7 +983,7 @@ function __wbg_get_imports() {
                 const a = state0.a;
                 state0.a = 0;
                 try {
-                    return __wbg_adapter_479(a, state0.b, arg0, arg1);
+                    return __wbg_adapter_483(a, state0.b, arg0, arg1);
                 } finally {
                     state0.a = a;
                 }
@@ -1154,6 +1155,9 @@ function __wbg_get_imports() {
     };
     imports.wbg.__wbg_setbuffer_bfa8af502ac452c6 = function(arg0, arg1) {
         arg0.buffer = arg1;
+    };
+    imports.wbg.__wbg_setfullscreen_4af42e6c57c33895 = function(arg0, arg1) {
+        set_fullscreen(arg0, arg1 !== 0);
     };
     imports.wbg.__wbg_sethidden_c9dddd5ae4b3314f = function(arg0, arg1) {
         arg0.hidden = arg1 !== 0;
@@ -1361,32 +1365,28 @@ function __wbg_get_imports() {
         const ret = false;
         return ret;
     };
-    imports.wbg.__wbindgen_closure_wrapper3187 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper3189 = function(arg0, arg1, arg2) {
         const ret = makeMutClosure(arg0, arg1, 1404, __wbg_adapter_49);
         return ret;
     };
-    imports.wbg.__wbindgen_closure_wrapper5800 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper5803 = function(arg0, arg1, arg2) {
         const ret = makeMutClosure(arg0, arg1, 2619, __wbg_adapter_52);
         return ret;
     };
-    imports.wbg.__wbindgen_closure_wrapper748 = function(arg0, arg1, arg2) {
-        const ret = makeClosure(arg0, arg1, 90, __wbg_adapter_32);
-        return ret;
-    };
     imports.wbg.__wbindgen_closure_wrapper750 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 90, __wbg_adapter_35);
+        const ret = makeClosure(arg0, arg1, 90, __wbg_adapter_32);
         return ret;
     };
     imports.wbg.__wbindgen_closure_wrapper752 = function(arg0, arg1, arg2) {
-        const ret = makeClosure(arg0, arg1, 90, __wbg_adapter_32);
+        const ret = makeMutClosure(arg0, arg1, 90, __wbg_adapter_35);
         return ret;
     };
     imports.wbg.__wbindgen_closure_wrapper754 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 90, __wbg_adapter_40);
+        const ret = makeClosure(arg0, arg1, 90, __wbg_adapter_32);
         return ret;
     };
     imports.wbg.__wbindgen_closure_wrapper756 = function(arg0, arg1, arg2) {
-        const ret = makeClosure(arg0, arg1, 90, __wbg_adapter_32);
+        const ret = makeMutClosure(arg0, arg1, 90, __wbg_adapter_40);
         return ret;
     };
     imports.wbg.__wbindgen_closure_wrapper758 = function(arg0, arg1, arg2) {
@@ -1394,6 +1394,10 @@ function __wbg_get_imports() {
         return ret;
     };
     imports.wbg.__wbindgen_closure_wrapper760 = function(arg0, arg1, arg2) {
+        const ret = makeClosure(arg0, arg1, 90, __wbg_adapter_32);
+        return ret;
+    };
+    imports.wbg.__wbindgen_closure_wrapper762 = function(arg0, arg1, arg2) {
         const ret = makeClosure(arg0, arg1, 90, __wbg_adapter_32);
         return ret;
     };
