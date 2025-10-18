@@ -219,10 +219,14 @@ impl GameDispatcher {
             return;
         }
 
+        let mut change_focus = self.client_state.focus;
+
         let level = assets
             .dispatcher
             .level
             .get_side(self.client_state.active_side);
+        let mut monitor = Aabb2::ZERO;
+        let mut book = Aabb2::ZERO;
         for (item_index, (item, _)) in level.items.iter().enumerate() {
             let Some(&hitbox) = self
                 .ui
@@ -231,6 +235,13 @@ impl GameDispatcher {
             else {
                 continue;
             };
+
+            match item {
+                DispatcherItem::Monitor => monitor = hitbox,
+                DispatcherItem::Book => book = hitbox,
+                _ => {}
+            }
+
             if hitbox.contains(self.cursor_position_game) {
                 match item {
                     DispatcherItem::DoorSign => {
@@ -241,9 +252,7 @@ impl GameDispatcher {
                     }
                     DispatcherItem::Monitor => {
                         assets.sounds.click.play();
-                        drop(assets);
-                        self.change_focus(Focus::Monitor);
-                        break;
+                        change_focus = Focus::Monitor;
                     }
                     DispatcherItem::ButtonStation
                         if !self.state.button_station_open
@@ -303,17 +312,14 @@ impl GameDispatcher {
                     }
                     DispatcherItem::Book => {
                         assets.sounds.book.play();
-                        drop(assets);
-                        self.change_focus(Focus::Book);
-                        break;
+                        change_focus = Focus::Book;
                     }
-                    _ => {}
+                    _ => continue,
                 }
                 break; // Only one item per click
             }
         }
 
-        let assets = self.context.assets.get();
         if let Focus::Monitor = self.client_state.focus {
             if self.state.monitor_unlocked {
                 if let Some(file) = self
@@ -351,8 +357,21 @@ impl GameDispatcher {
             } else if self.ui.user_icon.contains(self.cursor_position_game) {
                 assets.sounds.click.play();
                 // TODO: smth
+            } else if !monitor.contains(self.cursor_position_game) {
+                // Close monitor
+                change_focus = Focus::Whole;
             }
         }
+
+        if let Focus::Book = self.client_state.focus
+            && !book.contains(self.cursor_position_game)
+        {
+            // Close book
+            change_focus = Focus::Whole;
+        }
+
+        drop(assets);
+        self.change_focus(change_focus);
 
         if let DispatcherViewSide::Front = self.client_state.active_side
             && let Some(player) = &self.solver_player
