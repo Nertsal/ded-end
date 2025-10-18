@@ -6,7 +6,8 @@ pub struct DispatcherAssets {
     pub level: DispatcherLevel,
     #[load(list = "0..=4")]
     pub files: Vec<String>,
-    pub book_text: String,
+    pub book_text_left: String,
+    pub book_text_right: String,
     pub novella: String,
 }
 

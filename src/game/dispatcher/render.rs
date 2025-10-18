@@ -405,15 +405,31 @@ impl GameDispatcher {
             let book_pos = draw.target;
             draw.draw(&self.camera, &self.context.geng, framebuffer);
 
-            let book_pos = Aabb2::from_corners(vec2(100.0, -180.0), vec2(460.0, -630.0))
+            let left = Aabb2::from_corners(vec2(140.0, -180.0), vec2(450.0, -630.0))
+                .translate(book_pos.top_left());
+            let right = Aabb2::from_corners(vec2(600.0, -180.0), vec2(960.0, -630.0))
                 .translate(book_pos.top_left());
 
             let font = self.context.geng.default_font();
             self.context.geng.draw2d().draw2d(
                 framebuffer,
                 &self.camera,
-                &draw2d::Text::unit(&**font, &assets.dispatcher.book_text, assets.palette.text)
-                    .fit_into(book_pos),
+                &draw2d::Text::unit(
+                    &**font,
+                    &assets.dispatcher.book_text_left,
+                    assets.palette.text,
+                )
+                .fit_into(left),
+            );
+            self.context.geng.draw2d().draw2d(
+                framebuffer,
+                &self.camera,
+                &draw2d::Text::unit(
+                    &**font,
+                    &assets.dispatcher.book_text_right,
+                    assets.palette.text,
+                )
+                .fit_into(right),
             );
         }
 
