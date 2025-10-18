@@ -348,6 +348,22 @@ impl GameDispatcher {
                             .fit_into(*pos),
                     );
                 }
+
+                if let Focus::Monitor = self.client_state.focus
+                    && let Some(&pos) = self.ui.login_code.get(self.client_state.login_code.len())
+                    && self.time.as_f32().fract() < 0.6
+                {
+                    // Blinking cursor
+                    let pos = pos
+                        .with_width(pos.width() * 0.2, 0.1)
+                        .with_height(pos.height() * 0.9, 0.5);
+                    self.context.geng.draw2d().quad(
+                        framebuffer,
+                        &self.camera,
+                        pos,
+                        assets.palette.text,
+                    );
+                }
             }
         }
 
