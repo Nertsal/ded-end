@@ -629,6 +629,13 @@ impl GameDispatcher {
             .draw(&self.camera, &self.context.geng, framebuffer);
     }
 
+    fn change_side(&mut self, side: DispatcherViewSide) {
+        self.client_state.active_side = side;
+        if self.client_state.focus == Focus::Book {
+            self.change_focus(Focus::Whole);
+        }
+    }
+
     fn cursor_press(&mut self) {
         let assets = self.context.assets.get();
 
@@ -646,11 +653,13 @@ impl GameDispatcher {
 
         if self.ui.turn_left.contains(self.cursor_position_game) {
             assets.sounds.click.play();
-            self.client_state.active_side = self.client_state.active_side.cycle_left();
+            drop(assets);
+            self.change_side(self.client_state.active_side.cycle_left());
             return;
         } else if self.ui.turn_right.contains(self.cursor_position_game) {
             assets.sounds.click.play();
-            self.client_state.active_side = self.client_state.active_side.cycle_right();
+            drop(assets);
+            self.change_side(self.client_state.active_side.cycle_right());
             return;
         }
 
