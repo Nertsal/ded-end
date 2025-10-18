@@ -629,7 +629,7 @@ impl geng::State for GameDispatcher {
                 novella.next_char_in -= delta_time.as_f32();
                 while novella.next_char_in <= 0.0 {
                     novella.character += 1;
-                    novella.next_char_in += if novella.fast { 0.02 } else { 0.05 };
+                    novella.next_char_in += if novella.fast { 0.05 } else { 0.1 };
                     if novella.character >= line.chars().count() {
                         novella.is_line_done = true;
                     }
