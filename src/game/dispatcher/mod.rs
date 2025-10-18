@@ -89,7 +89,7 @@ impl NovellaState {
             line: 0,
             character: 0,
             fast: false,
-            next_char_in: 1.0,
+            next_char_in: 0.2,
             is_line_done: false,
         }
     }
@@ -196,10 +196,13 @@ impl GameDispatcher {
         let assets = self.context.assets.get();
 
         if let Some(novella) = &mut self.client_state.novella {
+            if novella.fast {
+                novella.next_char_in -= 0.2;
+            }
             novella.fast = true;
-            novella.next_char_in -= 0.1;
             if novella.is_line_done {
                 novella.line += 1;
+                novella.next_char_in = 0.0;
                 novella.character = 0;
                 novella.is_line_done = false;
                 novella.fast = false;
@@ -596,7 +599,7 @@ impl geng::State for GameDispatcher {
                 novella.next_char_in -= delta_time.as_f32();
                 while novella.next_char_in <= 0.0 {
                     novella.character += 1;
-                    novella.next_char_in += if novella.fast { 0.1 } else { 0.2 };
+                    novella.next_char_in += if novella.fast { 0.02 } else { 0.05 };
                     if novella.character >= line.chars().count() {
                         novella.is_line_done = true;
                     }
