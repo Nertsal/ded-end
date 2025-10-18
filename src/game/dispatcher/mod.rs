@@ -309,6 +309,9 @@ impl GameDispatcher {
                     DispatcherItem::RealMouse => {
                         assets.sounds.mouse.play();
                     }
+                    DispatcherItem::TheSock => {
+                        assets.sounds.uwu.play();
+                    }
                     DispatcherItem::Cactus => {
                         assets.sounds.cactus.play();
                         self.context
