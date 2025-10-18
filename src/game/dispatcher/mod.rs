@@ -71,6 +71,7 @@ pub struct DispatcherStateClient {
     bubble_buttons: usize,
     explosion: Option<(vec2<f32>, FTime)>,
     novella: Option<NovellaState>,
+    novella_completed: bool,
 }
 
 struct NovellaState {
@@ -149,6 +150,7 @@ impl GameDispatcher {
                 bubble_buttons: 0,
                 explosion: None,
                 novella: None,
+                novella_completed: false,
             },
             state: DispatcherState::new(),
             solver_state: SolverState::new(),
@@ -336,7 +338,9 @@ impl GameDispatcher {
                     assets.sounds.click.play();
                     if file == 4 {
                         // Open novella
-                        if self.client_state.novella.is_none() {
+                        if self.client_state.novella.is_none()
+                            && !self.client_state.novella_completed
+                        {
                             self.client_state.novella = Some(NovellaState::new(&assets));
                         }
                     }
@@ -606,6 +610,7 @@ impl geng::State for GameDispatcher {
                 }
             } else {
                 self.client_state.novella = None;
+                self.client_state.novella_completed = true;
             }
         }
     }
