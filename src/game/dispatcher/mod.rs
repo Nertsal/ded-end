@@ -327,6 +327,7 @@ impl GameDispatcher {
                     .files
                     .iter()
                     .position(|file| file.contains(self.cursor_position_game))
+                    && file <= self.solver_state.current_level
                 {
                     // Open file
                     assets.sounds.click.play();
