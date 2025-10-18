@@ -309,6 +309,7 @@ impl GameDispatcher {
                     }
                     _ => {}
                 }
+                break; // Only one item per click
             }
         }
 
