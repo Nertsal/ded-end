@@ -238,7 +238,6 @@ impl GameDispatcher {
             .dispatcher
             .level
             .get_side(self.client_state.active_side);
-        let mut monitor = Aabb2::ZERO;
         let mut book = Aabb2::ZERO;
         for (item_index, (item, _)) in level.items.iter().enumerate() {
             let Some(&hitbox) = self
@@ -249,10 +248,8 @@ impl GameDispatcher {
                 continue;
             };
 
-            match item {
-                DispatcherItem::Monitor => monitor = hitbox,
-                DispatcherItem::Book => book = hitbox,
-                _ => {}
+            if let DispatcherItem::Book = item {
+                book = hitbox
             }
 
             if hitbox.contains(self.cursor_position_game) {
@@ -376,7 +373,7 @@ impl GameDispatcher {
             } else if self.ui.user_icon.contains(self.cursor_position_game) {
                 assets.sounds.click.play();
                 // TODO: smth
-            } else if !monitor.contains(self.cursor_position_game) {
+            } else if !self.ui.monitor_inside.contains(self.cursor_position_game) {
                 // Close monitor
                 change_focus = Focus::Whole;
             }
