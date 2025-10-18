@@ -36,7 +36,7 @@ impl GameDispatcher {
 
             if let Some(line) = text.lines().nth(novella.line) {
                 let line: String = line.chars().take(novella.character).collect();
-                draw_text(
+                crate::render::draw_text(
                     &assets.font,
                     &line,
                     100.0,
@@ -285,7 +285,7 @@ impl GameDispatcher {
                     draw.draw(&self.camera, &self.context.geng, framebuffer);
 
                     if let Some(text) = assets.dispatcher.files.get(file) {
-                        draw_text(
+                        crate::render::draw_text(
                             &assets.font,
                             text,
                             10.0,
@@ -461,34 +461,22 @@ impl GameDispatcher {
                 vec2(0.5, 0.0),
             )
             .draw(&self.camera, &self.context.geng, framebuffer);
-    }
-}
 
-fn draw_text(
-    font: &Font,
-    text: &str,
-    font_size: f32,
-    color: Rgba<f32>,
-    position: Aabb2<f32>,
-    camera: &Camera2d,
-    framebuffer: &mut ugli::Framebuffer,
-) {
-    let lines = crate::util::wrap_text(font, text, position.width() / font_size);
-    let row = position.align_aabb(vec2(position.width(), font_size), vec2(0.5, 1.0));
-    let rows = row.stack(vec2(0.0, -row.height()), lines.len());
+        // DED END
+        if let Some((_, message)) = &self.client_state.dedend {
+            geng_utils::texture::DrawTexture::new(&assets.sprites.dedend)
+                .fit_screen(vec2(0.5, 0.5), framebuffer)
+                .draw(&geng::PixelPerfectCamera, &self.context.geng, framebuffer);
 
-    for (line, position) in lines.into_iter().zip(rows) {
-        font.draw(
-            framebuffer,
-            camera,
-            line,
-            position.align_pos(vec2(0.0, 0.5)),
-            crate::render::util::TextRenderOptions {
-                size: font_size,
-                color,
-                align: vec2(0.0, 0.5),
-                ..default()
-            },
-        );
+            let font = self.context.geng.default_font();
+            self.context.geng.draw2d().draw2d(
+                framebuffer,
+                &geng::PixelPerfectCamera,
+                &draw2d::Text::unit(&**font, message, Rgba::WHITE).fit_into(
+                    Aabb2::from_corners(vec2(0.3, 0.45), vec2(0.7, 0.35))
+                        .map_bounds(|p| p * framebuffer.size().as_f32()),
+                ),
+            );
+        }
     }
 }

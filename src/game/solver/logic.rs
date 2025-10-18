@@ -8,6 +8,17 @@ impl GameSolver {
 
         self.client_state.time += delta_time;
 
+        if let Some((timer, _)) = &mut self.client_state.dedend {
+            // DED END
+            if let Some(timer) = timer {
+                *timer -= delta_time;
+                if *timer <= FTime::ZERO {
+                    self.reload_level();
+                }
+            }
+            return;
+        }
+
         {
             let window = self.context.geng.window();
             let controls = &self.context.assets.get().solver.controls;
@@ -49,21 +60,22 @@ impl GameSolver {
 
         if let Some((pos, timer)) = &mut self.client_state.explosion {
             *timer += delta_time;
-            if timer.as_f32() > 1.0 {
+            if timer.as_f32() > 0.5 {
                 if self.state.popped {
-                    self.game_crash("тебе конец, и игре тоже");
+                    self.game_crash(false, "тебе конец, и игре тоже");
                     return;
                 }
 
                 if (self.client_state.player.collider.position - *pos)
                     .len()
                     .as_f32()
-                    < 1.5
+                    < 2.5
                 {
-                    self.game_crash("ты взорвался");
+                    self.game_crash(true, "ты взорвался");
                     return;
                 }
-
+            }
+            if timer.as_f32() > 1.0 {
                 self.client_state.explosion = None;
                 if self.state.current_level == 1 && !self.state.is_exit_open() {
                     self.state.levels_completed += 1;
@@ -91,7 +103,7 @@ impl GameSolver {
             {
                 remove_projs.push(proj_i);
             } else if proj.collider.check(&self.client_state.player.collider) {
-                self.game_crash("ты попался карасю");
+                self.game_crash(true, "ты попался карасю");
                 return;
                 // remove_projs.push(proj_i);
             }

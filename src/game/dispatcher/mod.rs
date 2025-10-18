@@ -60,6 +60,7 @@ struct DispatcherUi {
 }
 
 pub struct DispatcherStateClient {
+    dedend: Option<(Option<FTime>, String)>,
     hovering_smth: bool,
     active_side: DispatcherViewSide,
     focus: Focus,
@@ -72,6 +73,26 @@ pub struct DispatcherStateClient {
     explosion: Option<(vec2<f32>, FTime)>,
     novella: Option<NovellaState>,
     novella_completed: bool,
+}
+
+impl DispatcherStateClient {
+    pub fn new() -> Self {
+        Self {
+            dedend: None,
+            hovering_smth: false,
+            active_side: DispatcherViewSide::Back,
+            focus: Focus::Whole,
+            login_code: vec![],
+            opened_file: None,
+            opened_meme: None,
+            bfb_pressed: None,
+            buttons_pressed: HashMap::new(),
+            bubble_buttons: 0,
+            explosion: None,
+            novella: None,
+            novella_completed: false,
+        }
+    }
 }
 
 struct NovellaState {
@@ -138,20 +159,7 @@ impl GameDispatcher {
             cursor_position_raw: vec2::ZERO,
             cursor_position_game: vec2::ZERO,
 
-            client_state: DispatcherStateClient {
-                hovering_smth: false,
-                active_side: DispatcherViewSide::Back,
-                focus: Focus::Whole,
-                login_code: vec![],
-                opened_file: None,
-                opened_meme: None,
-                bfb_pressed: None,
-                buttons_pressed: HashMap::new(),
-                bubble_buttons: 0,
-                explosion: None,
-                novella: None,
-                novella_completed: false,
-            },
+            client_state: DispatcherStateClient::new(),
             state: DispatcherState::new(),
             solver_state: SolverState::new(),
             solver_player: None,
@@ -483,10 +491,16 @@ impl GameDispatcher {
             ServerMessage::SyncDispatcherState(dispatcher_state) => self.state = dispatcher_state,
             ServerMessage::SyncSolverState(solver_state) => self.solver_state = solver_state,
             ServerMessage::SyncSolverPlayer(player) => self.solver_player = Some(player),
-            ServerMessage::GameCrash(_) => {
-                // TODO
+            ServerMessage::GameCrash(auto_reboot, message) => {
+                self.game_crash(auto_reboot, message);
             }
         }
+    }
+
+    fn game_crash(&mut self, auto_reboot: bool, message: impl Into<String>) {
+        let message = message.into();
+        log::info!("DED END: {message}");
+        self.client_state.dedend = Some((auto_reboot.then(|| FTime::new(5.0)), message));
     }
 
     fn update_buttons(&mut self, delta_time: FTime) {
@@ -494,6 +508,7 @@ impl GameDispatcher {
             *time += delta_time;
             if time.as_f32() > 1.0 {
                 self.connection.send(ClientMessage::CrashOther(
+                    true,
                     "твой друг нажал на большую красную кнопку".into(),
                 ));
                 self.client_state.bfb_pressed = None;
@@ -515,6 +530,7 @@ impl GameDispatcher {
                     DispatcherItem::ButtonSalad => {
                         if self.state.monitor_unlocked && self.solver_state.levels_completed == 0 {
                             self.connection.send(ClientMessage::CrashOther(
+                                true,
                                 "твой друг нажал на салатовую кнопку".into(),
                             ));
                         }
@@ -553,6 +569,10 @@ impl GameDispatcher {
             .buttons_pressed
             .retain(|_, time| time.as_f32() < 1.0);
     }
+
+    fn reload(&mut self) {
+        self.client_state = DispatcherStateClient::new();
+    }
 }
 
 impl geng::State for GameDispatcher {
@@ -571,10 +591,20 @@ impl geng::State for GameDispatcher {
         self.time += delta_time;
         self.update_buttons(delta_time);
 
+        if let Some((timer, _)) = &mut self.client_state.dedend {
+            if let Some(timer) = timer {
+                *timer -= delta_time;
+                if *timer < FTime::ZERO {
+                    self.reload();
+                }
+            }
+            return;
+        }
+
         if let Some((_, timer)) = &mut self.client_state.explosion {
             *timer += delta_time;
             if timer.as_f32() > 1.0 && self.solver_state.popped {
-                panic!("тебе конец, и игре тоже");
+                self.game_crash(false, "тебе конец, и игре тоже");
             }
         }
 

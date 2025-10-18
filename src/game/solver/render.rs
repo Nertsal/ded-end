@@ -241,5 +241,22 @@ impl GameSolver {
                     .draw(&self.camera, &self.context.geng, framebuffer);
             }
         }
+
+        // DED END
+        if let Some((_, message)) = &self.client_state.dedend {
+            geng_utils::texture::DrawTexture::new(&assets.sprites.dedend)
+                .fit_screen(vec2(0.5, 0.5), framebuffer)
+                .draw(&geng::PixelPerfectCamera, &self.context.geng, framebuffer);
+
+            let font = self.context.geng.default_font();
+            self.context.geng.draw2d().draw2d(
+                framebuffer,
+                &geng::PixelPerfectCamera,
+                &draw2d::Text::unit(&**font, message, Rgba::WHITE).fit_into(
+                    Aabb2::from_corners(vec2(0.3, 0.45), vec2(0.7, 0.35))
+                        .map_bounds(|p| p * framebuffer.size().as_f32()),
+                ),
+            );
+        }
     }
 }

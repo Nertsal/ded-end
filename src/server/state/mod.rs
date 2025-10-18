@@ -323,7 +323,7 @@ impl ServerState {
                     }
                 }
             }
-            ClientMessage::CrashOther(message) => {
+            ClientMessage::CrashOther(auto_reboot, message) => {
                 if let Some(room) = client
                     .room
                     .as_ref()
@@ -336,7 +336,7 @@ impl ServerState {
                         {
                             client
                                 .sender
-                                .send(ServerMessage::GameCrash(message.clone()));
+                                .send(ServerMessage::GameCrash(auto_reboot, message.clone()));
                         }
                     }
                 }

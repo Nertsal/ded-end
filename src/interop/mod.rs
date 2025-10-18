@@ -56,7 +56,7 @@ pub enum ServerMessage {
     SyncDispatcherState(DispatcherState),
     SyncSolverState(SolverState),
     SyncSolverPlayer(Player),
-    GameCrash(String),
+    GameCrash(bool, String),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -69,7 +69,7 @@ pub enum ClientMessage {
     SyncDispatcherState(DispatcherState),
     SyncSolverState(SolverState),
     SyncSolverPlayer(Player),
-    CrashOther(String),
+    CrashOther(bool, String),
 }
 
 #[derive(Debug, Serialize, Deserialize)]

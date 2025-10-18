@@ -86,7 +86,7 @@ impl Lobby {
             ServerMessage::SyncDispatcherState(_)
             | ServerMessage::SyncSolverState(_)
             | ServerMessage::SyncSolverPlayer(_)
-            | ServerMessage::GameCrash(_) => {}
+            | ServerMessage::GameCrash(..) => {}
         }
     }
 }

@@ -37,6 +37,7 @@ pub struct GameSolver {
 
 struct SolverStateClient {
     time: FTime,
+    dedend: Option<(Option<FTime>, String)>,
     player: Player,
     level_static_colliders: Vec<Collider>,
     door_entrance: Collider,
@@ -52,6 +53,44 @@ struct SolverStateClient {
     interact_item: Option<usize>,
     projectiles: Vec<Projectile>,
     fish_cooldown: FTime,
+}
+
+impl SolverStateClient {
+    fn new() -> Self {
+        Self {
+            time: FTime::ZERO,
+            dedend: None,
+            player: Player {
+                collider: Collider::aabb(
+                    Aabb2::point(vec2(0.0, 0.0))
+                        .extend_positive(vec2(1.0, 1.5))
+                        .as_r32(),
+                ),
+                velocity: vec2::ZERO,
+                state: PlayerState::Airborn,
+                control_timeout: None,
+                facing_left: false,
+                can_hold_jump: false,
+                coyote_time: None,
+                jump_buffer: None,
+                animation_time: FTime::ZERO,
+            },
+            level_static_colliders: Vec::new(),
+            door_entrance: Collider::aabb(Aabb2::ZERO),
+            door_exit: Collider::aabb(Aabb2::ZERO),
+            platforms: Vec::new(),
+            bubble_balls: Vec::new(),
+            items: Vec::new(),
+            picked_up_item: None,
+            explosion: None,
+            grandson_spin: None,
+            grandpa_drill: None,
+            bubble_code: Vec::new(),
+            interact_item: None,
+            projectiles: Vec::new(),
+            fish_cooldown: FTime::new(1.0),
+        }
+    }
 }
 
 struct Projectile {
@@ -73,38 +112,7 @@ impl GameSolver {
             framebuffer_size: vec2(1, 1),
             screen: Aabb2::ZERO.extend_positive(vec2(1.0, 1.0)),
 
-            client_state: SolverStateClient {
-                time: FTime::ZERO,
-                player: Player {
-                    collider: Collider::aabb(
-                        Aabb2::point(vec2(0.0, 0.0))
-                            .extend_positive(vec2(1.0, 1.5))
-                            .as_r32(),
-                    ),
-                    velocity: vec2::ZERO,
-                    state: PlayerState::Airborn,
-                    control_timeout: None,
-                    facing_left: false,
-                    can_hold_jump: false,
-                    coyote_time: None,
-                    jump_buffer: None,
-                    animation_time: FTime::ZERO,
-                },
-                level_static_colliders: Vec::new(),
-                door_entrance: Collider::aabb(Aabb2::ZERO),
-                door_exit: Collider::aabb(Aabb2::ZERO),
-                platforms: Vec::new(),
-                bubble_balls: Vec::new(),
-                items: Vec::new(),
-                picked_up_item: None,
-                explosion: None,
-                grandson_spin: None,
-                grandpa_drill: None,
-                bubble_code: Vec::new(),
-                interact_item: None,
-                projectiles: Vec::new(),
-                fish_cooldown: FTime::new(1.0),
-            },
+            client_state: SolverStateClient::new(),
             state: SolverState::new(),
             dispatcher_state: DispatcherState::new(),
             camera: Camera2d {
@@ -142,10 +150,7 @@ impl GameSolver {
                 .play_music(&self.context.assets.get().sounds.dispatcher);
         }
 
-        self.client_state.level_static_colliders.clear();
-        self.client_state.platforms.clear();
-        self.client_state.bubble_balls.clear();
-        self.client_state.projectiles.clear();
+        self.client_state = SolverStateClient::new();
 
         self.player_respawn();
         self.update_level_colliders();
@@ -296,14 +301,14 @@ impl GameSolver {
                 self.dispatcher_state = dispatcher_state
             }
             ServerMessage::SyncSolverState(solver_state) => self.state = solver_state,
-            ServerMessage::GameCrash(message) => self.game_crash(message),
+            ServerMessage::GameCrash(auto_reboot, message) => self.game_crash(auto_reboot, message),
         }
     }
 
-    fn game_crash(&mut self, message: impl Into<String>) {
+    fn game_crash(&mut self, auto_reboot: bool, message: impl Into<String>) {
         let message = message.into();
-        log::info!("Game restart: {message}");
-        self.reload_level();
+        log::info!("DED END: {message}");
+        self.client_state.dedend = Some((auto_reboot.then(|| FTime::new(5.0)), message));
     }
 
     fn press_enter(&mut self) {

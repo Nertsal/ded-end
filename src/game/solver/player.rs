@@ -144,7 +144,7 @@ impl GameSolver {
                     } else if check(Recycle, Grandpa) {
                         self.client_state.grandpa_drill = Some(FTime::ZERO);
                     } else if check(Grandpa, Trashcan) {
-                        self.game_crash("ДЕДЭНД: вспомни с кем честь имеешь, скорлупа");
+                        self.game_crash(true, "вспомни с кем честь имеешь, скорлупа");
                         return;
                     } else if check(Grandson, Trashcan) {
                         disappear = true;
