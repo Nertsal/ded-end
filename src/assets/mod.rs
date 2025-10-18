@@ -84,6 +84,8 @@ friendly_derive::texture_atlas!(pub SpritesAtlas {
 
     menu,
     button_background,
+    create_room,
+    join_room,
     code_background,
     lobby,
     think0,

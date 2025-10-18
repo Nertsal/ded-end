@@ -249,14 +249,14 @@ impl MainMenuUi {
                 .extend_symmetric(size * screen_ratio / 2.0)
         };
 
-        let mut create = mk_button(vec2(309.0, 453.0), vec2(483.0, 118.0));
-        let button = context.state.get_root_or(|| {
-            ButtonWidget::new(atlas.button_background()).with_text("Создать комнату")
-        });
+        let mut create = mk_button(vec2(309.0, 453.0), vec2(504.0, 137.0));
+        let button = context
+            .state
+            .get_root_or(|| ButtonWidget::new(atlas.create_room()));
         button.text.options.color = assets.palette.text;
         if create.contains(context.cursor.position) {
             create = create.extend_symmetric(
-                vec2(atlas.button_background().size().as_f32().aspect(), 1.0) * 10.0,
+                vec2(atlas.button_background().size().as_f32().aspect(), 1.0) * 3.0,
             );
         }
         button.update(create, context);
@@ -264,14 +264,14 @@ impl MainMenuUi {
             state.action = Some(Action::CreateRoom);
         }
 
-        let mut join = mk_button(vec2(320.0, 620.0), vec2(483.0, 118.0));
-        let join_button = context.state.get_root_or(|| {
-            ButtonWidget::new(atlas.button_background()).with_text("Присоединиться")
-        });
+        let mut join = mk_button(vec2(320.0, 620.0), vec2(497.0, 143.0));
+        let join_button = context
+            .state
+            .get_root_or(|| ButtonWidget::new(atlas.join_room()));
         join_button.text.options.color = assets.palette.text;
         if join.contains(context.cursor.position) {
             join = join.extend_symmetric(
-                vec2(atlas.button_background().size().as_f32().aspect(), 1.0) * 10.0,
+                vec2(atlas.button_background().size().as_f32().aspect(), 1.0) * 3.0,
             );
         }
         join_button.update(join, context);
@@ -279,7 +279,7 @@ impl MainMenuUi {
         let mut code = mk_button(vec2(715.0, 625.0), vec2(210.0, 80.0));
         if code.contains(context.cursor.position) {
             code = code.extend_symmetric(
-                vec2(atlas.code_background().size().as_f32().aspect(), 1.0) * 10.0,
+                vec2(atlas.code_background().size().as_f32().aspect(), 1.0) * 3.0,
             );
         }
         let code_input = context
