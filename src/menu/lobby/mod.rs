@@ -167,6 +167,8 @@ impl LobbyUi {
     }
 
     pub fn layout(&mut self, state: &mut LobbyState, screen: Aabb2<f32>, context: &mut UiContext) {
+        let screen = screen.fit_aabb(vec2(16.0, 9.0), vec2(0.5, 0.5));
+        let screen_ratio = screen.size() / vec2(1920.0, 1080.0);
         context.screen = screen;
         context.font_size = screen.height() * 0.05;
         context.layout_size = screen.height() * 0.07;
@@ -178,14 +180,14 @@ impl LobbyUi {
             .get_root_or(|| IconWidget::new(atlas.lobby()))
             .update(screen, context);
 
-        let code = screen.align_aabb(vec2(560.0, 150.0), vec2(0.5, 0.63));
+        let code = screen.align_aabb(vec2(560.0, 150.0) * screen_ratio, vec2(0.5, 0.63));
 
         let code_text = context.state.get_root_or(|| TextWidget::new(""));
         code_text.options.color = assets.palette.text;
         code_text.text = state.room_info.code.to_string().into();
         code_text.update(code, context);
 
-        let mut dispatcher = screen.align_aabb(vec2(650.0, 230.0), vec2(0.8, 0.15));
+        let mut dispatcher = screen.align_aabb(vec2(650.0, 230.0) * screen_ratio, vec2(0.8, 0.15));
         let button = context
             .state
             .get_root_or(|| ButtonWidget::new(atlas.think0()));
@@ -198,7 +200,7 @@ impl LobbyUi {
             state.select_role(GameRole::Dispatcher);
         }
 
-        let mut solver = screen.align_aabb(vec2(650.0, 230.0), vec2(0.2, 0.15));
+        let mut solver = screen.align_aabb(vec2(650.0, 230.0) * screen_ratio, vec2(0.2, 0.15));
         let button = context
             .state
             .get_root_or(|| ButtonWidget::new(atlas.run0()));

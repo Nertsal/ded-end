@@ -106,7 +106,7 @@ impl AtlasOpts {
                     #(#path_mut)*;
                     let path = path.with_extension("png");
                     let options = geng::asset::TextureOptions{
-                        filter: ugli::Filter::Nearest,
+                        // filter: ugli::Filter::Nearest,
                         ..default()
                     };
                     <ugli::Texture as geng::asset::Load>::load(&manager, &path, &options)
