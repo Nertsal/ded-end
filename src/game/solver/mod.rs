@@ -311,16 +311,19 @@ impl GameSolver {
         self.client_state.dedend = Some((auto_reboot.then(|| FTime::new(5.0)), message));
     }
 
-    fn press_enter(&mut self) {
-        if self.state.current_level == 3
-            && !self.state.solved_bubble_code
-            && self.client_state.bubble_code == vec![4, 2, 1, 3]
-        {
+    fn submit_bubble_code(&mut self) {
+        if !self.state.solved_bubble_code && self.client_state.bubble_code == vec![4, 2, 1, 3] {
             self.context.geng.window().stop_text_edit();
             self.state.solved_bubble_code = true;
             self.client_state.level_static_colliders.pop();
             self.connection
                 .send(ClientMessage::SyncSolverState(self.state.clone()));
+        }
+    }
+
+    fn press_enter(&mut self) {
+        if self.state.current_level == 3 {
+            self.submit_bubble_code();
         }
     }
 

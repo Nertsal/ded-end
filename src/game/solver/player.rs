@@ -158,6 +158,7 @@ impl GameSolver {
                 && let Some(item) = self.client_state.items.get(i)
             {
                 if item.kind == SolverItemKind::BubbleCode {
+                    self.submit_bubble_code();
                 } else {
                     // Pick up an item
                     self.client_state.picked_up_item = Some(self.client_state.items.swap_remove(i));

@@ -132,17 +132,29 @@ impl GameSolver {
                 let code = target;
                 let code = code.extend_symmetric(-code.size() * vec2(0.1, 0.15));
                 let font = self.context.geng.default_font();
-                for (pos, &digit) in code
-                    .split_columns(4)
-                    .into_iter()
-                    .zip(&self.client_state.bubble_code)
-                {
+                let digits = code.split_columns(4);
+                for (&pos, &digit) in digits.iter().zip(&self.client_state.bubble_code) {
                     self.context.geng.draw2d().draw2d(
                         framebuffer,
                         &self.camera,
                         &draw2d::Text::unit(&**font, digit.to_string(), assets.palette.text)
                             .fit_into(pos),
                     )
+                }
+
+                if let Some(&pos) = digits.get(self.client_state.bubble_code.len())
+                    && self.client_state.time.as_f32().fract() < 0.6
+                {
+                    // Blinking cursor
+                    let pos = pos
+                        .with_width(pos.width() * 0.2, 0.1)
+                        .with_height(pos.height() * 0.9, 0.5);
+                    self.context.geng.draw2d().quad(
+                        framebuffer,
+                        &self.camera,
+                        pos,
+                        assets.palette.text,
+                    );
                 }
             }
         }
