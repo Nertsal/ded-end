@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 mod geometry;
 pub mod layout;
 mod state;
@@ -287,7 +289,6 @@ impl WidgetSfxConfig {
         Self {
             hover: true,
             left_click: true,
-            ..default()
         }
     }
 }

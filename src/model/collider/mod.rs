@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 mod shape;
 
 pub use self::shape::*;

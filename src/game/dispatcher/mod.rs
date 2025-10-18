@@ -573,12 +573,8 @@ impl geng::State for GameDispatcher {
 
         if let Some((_, timer)) = &mut self.client_state.explosion {
             *timer += delta_time;
-            if timer.as_f32() > 1.0 {
-                if self.solver_state.popped {
-                    panic!("тебе конец, и игре тоже");
-                }
-
-                // panic!("ты взорвался");
+            if timer.as_f32() > 1.0 && self.solver_state.popped {
+                panic!("тебе конец, и игре тоже");
             }
         }
 
